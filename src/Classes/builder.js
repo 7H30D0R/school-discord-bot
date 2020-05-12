@@ -1,3 +1,5 @@
+import Database from "./database";
+
 /**
  * Builds a query, executes and returns the base model.
  */
@@ -207,6 +209,66 @@ export default class Builder {
      * Gets the first record based on the current query.
      */
     first = () => {
+        let previousLimit = this._limit;
+
+        this.limit(1);
+        this.buildQuery();
+        this.limit(previousLimit);
+
+        // TODO: Remove debug line
+        console.log(this.query);
+
+        return new Promise((resolve, reject) => {
+            Database.connection.query(this.query, this.queryArguments, (error, results, fields) => {
+                if (error) {
+                    console.log(error);
+                    reject(error);
+                    return;
+                }
+
+                let result = results[0];
+
+                // Create new model instance
+                let model = new this.base();
+                model.data = {};
+
+                // Find primary key
+                for (let field of fields) {
+                    let isPrimaryKey = (field.flags & PRI_KEY_FLAG) == PRI_KEY_FLAG;
+
+                    if (isPrimaryKey) {
+                        model.primaryKey = field.name;
+                        break;
+                    }
+                }
+
+                // Set primary key to null if not exists
+                if (model.primaryKey === undefined) {
+                    model.primaryKey = null;
+                }
+
+                // Insert data into model
+                for (let column in result) {
+                    model.data[column] = result[column];
+
+                    // Don't override default fields
+                    if (model.hasOwnProperty(column)) {
+                        console.log(`Skipped column ${key} - the model already has a field with the same name.`);
+                        continue;
+                    }
+
+                    // Create getter and setter with column name (ignore setter if column is primary key)
+                    Object.defineProperty(model, column, {
+                        get: function() { return this.data[column]; },
+                        set: (model.primaryKey == column) ? undefined : function(value) { this.data[column] = value; }
+                    });
+                }
+
+                resolve(model);
+            });
+        });
         // return promise
     }
 }
+
+const PRI_KEY_FLAG = 2;

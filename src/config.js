@@ -8,11 +8,11 @@ module.exports = {
 
     CLIENT_TOKEN: process.env.CLIENT_TOKEN,
     
-    DBCONFIG: {
-        HOST: process.env.MYSQL_HOST,
-        USER: process.env.MYSQL_USER,
-        PASS: process.env.MYSQL_PASS,
-        NAME: process.env.MYSQL_DATABASE
+    DB_CONFIG: {
+        host: process.env.MYSQL_HOST,
+        user: process.env.MYSQL_USER,
+        password: process.env.MYSQL_PASS,
+        database: process.env.MYSQL_DATABASE
     },
 
     REACTION_NUMBERS: [

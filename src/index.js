@@ -1,14 +1,14 @@
 import Test from './Models/test.js';
 import Discord from 'discord.js';
-import { CLIENT_TOKEN, COMMAND_PREFIX, REACTION_NUMBERS, DBCONFIG } from './config.js';
+import { REACTION_NUMBERS, DB_CONFIG, COMMAND_PREFIX, CLIENT_TOKEN } from './config.js';
 import Database from './Classes/database';
-import dotenv from 'dotenv';
-
-// Load environment config file
-dotenv.config();
 
 // Initialize database connection
-Database.connect(DBCONFIG["HOST"], DBCONFIG["USER"], DBCONFIG["PASS"], DBCONFIG["NAME"]);
+Database.connect(DB_CONFIG).then(async () => {
+    let test = await Test.limit(1).first();
+    test.save();
+
+}).catch((error) => { console.log("big error"); console.log(error); });
 
 // Initialize Discord client
 const client = new Discord.Client();
@@ -18,9 +18,7 @@ client.login(CLIENT_TOKEN);
 // From old project
 
 // test
-let test = Test.where("column_one", 1).orderBy('column_two', 'DESC').limit(1);
 
-console.log(test.buildQuery());
 
 client.on('ready', () => {
     console.log(`Connected to Discord as ${client.user.tag}!`);

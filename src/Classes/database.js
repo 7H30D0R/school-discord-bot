@@ -18,19 +18,11 @@ export default class Database {
 
     /**
      * Connects to the specified MySQL server.
-     * @param {*} host Host name
-     * @param {*} user Username
-     * @param {*} password Password
-     * @param {*} database Database name
+     * @param {*} connectionConfig MySQL connection configuration.
      */
-    static connect(host, user, password, database) {
+    static connect(connectionConfig) {
         return new Promise((resolve, reject) => {
-            Database.connection = mysql.createConnection({
-                host: host,
-                user: user,
-                password: password,
-                database: database
-            });
+            Database.connection = mysql.createConnection(connectionConfig);
 
             Database.connection.connect((error) => {
                 if (error) {
