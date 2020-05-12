@@ -68,7 +68,6 @@ export default class Model {
      */
     save = () => {
         // TODO: Clean method
-        // TODO: Support saving new data (insert statements)
 
         // Insert instead if new row
         if (this.isNewRow) {
@@ -116,21 +115,12 @@ export default class Model {
             query += ` WHERE ${this.primaryKey} = ?`;
             parameters.push(this.data[this.primaryKey]);
 
-            // TODO: Remove debug lines
-            console.log(query);
-            console.log(parameters);
-
             // Exectue query
             Database.connection.query(query, parameters, (error) => {
                 if (error) {
-                    // TODO: Remove debug line
-                    console.log(error);
                     reject(error);
                     return;
                 }
-
-                // TODO: Remove debug line
-                console.log("Saved");
 
                 resolve();
             });
@@ -169,23 +159,17 @@ export default class Model {
                 i++;
             }
 
+            query += ") VALUES ?";
+
             // Return if no data has been added
             if (i === 0) {
                 reject(new Error("Model does not have any fillable columns"));
                 return;
             }
 
-            query += ") VALUES ?";
-            
-            // TODO: Remove debug lines
-            console.log(query);
-            console.log(parameters);
-
             // Execute query
             Database.connection.query(query, [[parameters]], (error, result, fields) => {
                 if (error) {
-                    // TODO: Remove debug line
-                    console.log(error);
                     reject(error);
                     return;
                 }
@@ -193,8 +177,6 @@ export default class Model {
                 let selectQuery = `SELECT * FROM ${this.constructor.table} WHERE id = ? LIMIT 1`;
                 Database.connection.query(selectQuery, [result.insertId], (error, results, fields) => {
                     if (error) {
-                        // TODO: Remove debug line
-                        console.log(error);
                         reject(error);
                         return;
                     }

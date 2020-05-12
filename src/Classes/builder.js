@@ -1,4 +1,5 @@
 import Database from "./database";
+import Model from "./model";
 
 /**
  * Builds a query, executes and returns the base model.
@@ -196,13 +197,13 @@ export default class Builder {
 
     /**
      * Gets all records based on the current query.
+     * @returns {Model[]} Array of models with data.
      */
     get = () => {
         this.buildQuery();
         return new Promise((resolve, reject) => {
             Database.connection.query(this.query, this.queryArguments, (error, results, fields) => {
                 if (error) {
-                    console.log(error);
                     reject(error);
                     return;
                 }
@@ -224,6 +225,7 @@ export default class Builder {
 
     /**
      * Gets the first record based on the current query.
+     * @returns {Model} Model with data.
      */
     first = () => {
         let previousLimit = this._limit;
@@ -233,13 +235,9 @@ export default class Builder {
 
         this.limit(previousLimit);
 
-        // TODO: Remove debug line
-        console.log(this.query);
-
         return new Promise((resolve, reject) => {
             Database.connection.query(this.query, this.queryArguments, (error, results, fields) => {
                 if (error) {
-                    console.log(error);
                     reject(error);
                     return;
                 }
@@ -253,8 +251,5 @@ export default class Builder {
                 resolve(model);
             });
         });
-        // return promise
     }
 }
-
-const PRI_KEY_FLAG = 2;

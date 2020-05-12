@@ -5,7 +5,7 @@ import Database from './Classes/database';
 
 // Initialize database connection
 Database.connect(DB_CONFIG).then(async () => {
-    let test = await Test.orderBy('id', 'DESC').get();
+    let test = await Test.orderBy('id', 'DESC').limit(3).get();
 
     for (let row of test) {
         console.log(row.id);

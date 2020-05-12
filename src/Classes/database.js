@@ -18,7 +18,7 @@ export default class Database {
 
     /**
      * Connects to the specified MySQL server.
-     * @param {*} connectionConfig MySQL connection configuration.
+     * @param {mysql.ConnectionConfig} connectionConfig MySQL connection configuration.
      */
     static connect(connectionConfig) {
         return new Promise((resolve, reject) => {
@@ -31,8 +31,6 @@ export default class Database {
                 }
 
                 Database.hasConnected = true;
-                console.log('Connected to MySQL database!');
-
                 resolve();
             });
         });
