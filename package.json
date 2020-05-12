@@ -5,16 +5,17 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "babel --presets es2015 -d lib/ src",
-    "start": "babel-node --presets es2015 src/index.js --plugins transform-class-properties"
+    "build": "babel --presets @babel/preset-env -d lib/ src",
+    "start": "babel-node --presets @babel/preset-env src/index.js --plugins @babel/plugin-proposal-class-properties"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-plugin-transform-class-properties": "^6.24.1",
-    "babel-preset-env": "^1.7.0",
-    "babel-preset-es2015": "^6.24.1"
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.0.0",
+    "@babel/node": "^7.0.0",
+    "@babel/plugin-proposal-class-properties": "^7.0.0",
+    "@babel/preset-env": "^7.0.0"
   },
   "dependencies": {
     "discord.js": "^12.2.0",
