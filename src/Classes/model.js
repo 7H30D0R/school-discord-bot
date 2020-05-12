@@ -2,11 +2,43 @@ import Builder from "./builder";
 import Database from './database';
 
 export default class Model {
-    constructor() {
+    /**
+     * Whether this is new data to be inserted in the database.
+     * @type {boolean}
+     */
+    isNewRow = false;
+
+    constructor(data) {
         // Abstract class
         if (new.target === Model) {
             throw new TypeError("Cannot construct Abstract instances directly");
-        }      
+        }
+
+        // Create model with new data
+        if (data !== undefined && typeof(data) === 'object') {
+            this.isNewRow = true;
+            this.data = {};
+
+            // Insert data into model
+            for (let column in data) {
+                // Skip column if not fillable
+                if (!this.constructor.fillable.includes(column)) continue;
+
+                this.data[column] = data[column];
+
+                // Don't override default fields
+                if (this.hasOwnProperty(column)) {
+                    console.log(`Skipped column ${key} - the model already has a field with the same name.`);
+                    continue;
+                }
+
+                // Create getter and setter with column name
+                Object.defineProperty(this, column, {
+                    get: function() { return this.data[column]; },
+                    set: function(value) { this.data[column] = value; }
+                });
+            }
+        }
     }
     
     /**
@@ -57,8 +89,12 @@ export default class Model {
         // TODO: Clean method
         // TODO: Support saving new data (insert statements)
 
-        return new Promise((resolve, reject) => {
+        // Insert instead if new row
+        if (this.isNewRow) {
+            return this.insert();
+        }
 
+        return new Promise((resolve, reject) => {
             // TODO: Support table without primary keys
             if (this.primaryKey === null) {
                 reject(new Error("Table does not have a primary key."));
@@ -68,7 +104,7 @@ export default class Model {
             // Return if model has no fillable columns
             if (typeof(this.constructor.fillable) !== 'object' 
                 || this.constructor.fillable.length === 0) {
-                    
+
                 reject(new Error("Model does not have any fillable columns"));
                 return;
             }
@@ -119,4 +155,119 @@ export default class Model {
             });
         });
     }
+
+    /**
+     * Insert new data into database
+     */
+    insert = () => {
+        // You can only insert if this is a new row.
+        if (!this.isNewRow) return;
+
+        return new Promise((resolve, reject) => {
+            // Return if model has no fillable columns
+            if (typeof(this.constructor.fillable) !== 'object' 
+                || this.constructor.fillable.length === 0) {
+
+                reject(new Error("Model does not have any fillable columns"));
+                return;
+            }
+
+            // Generate insert query
+            let query = `INSERT INTO ${this.constructor.table} (`;
+            let parameters = [];
+            
+            // Add columns to query
+            let i = 0;
+            for (let column in this.data) {
+                if (column == this.primaryKey || !this.constructor.fillable.includes(column)) continue;
+
+                query += (i !== 0) ? ", " : "";
+                query += `${column}`;
+                parameters.push(this.data[column]);
+
+                i++;
+            }
+
+            // Return if no data has been added
+            if (i === 0) {
+                reject(new Error("Model does not have any fillable columns"));
+                return;
+            }
+
+            query += ") VALUES (";
+
+            // Add placeholder values to query
+            for (let y = 0; y < i; y++) {
+                query += (y !== 0) ? ", " : "";
+                query += `?`;
+            }
+
+            query += ")";
+
+            // TODO: Remove debug lines
+            console.log(query);
+            console.log(parameters);
+
+            // Execute query
+            Database.connection.query(query, parameters, (error, result, fields) => {
+                if (error) {
+                    // TODO: Remove debug line
+                    console.log(error);
+                    reject(error);
+                    return;
+                }
+
+                let selectQuery = `SELECT * FROM ${this.constructor.table} WHERE id = ? LIMIT 1`;
+                Database.connection.query(selectQuery, [result.insertId], (error, results, fields) => {
+                    if (error) {
+                        // TODO: Remove debug line
+                        console.log(error);
+                        reject(error);
+                        return;
+                    }
+
+                    let result = results[0];
+                    this.fillModelFromData(result, fields);
+
+                    resolve();
+                });
+            });
+
+        });
+    }
+
+    fillModelFromData = (data, fields) => {
+        if (fields !== undefined) {
+            // Find primary key
+            for (let field of fields) {
+                let isPrimaryKey = (field.flags & PRI_KEY_FLAG) == PRI_KEY_FLAG;
+
+                if (isPrimaryKey) {
+                    this.primaryKey = field.name;
+                    break;
+                }
+            }
+        }
+
+        if (typeof(this.data) !== 'object') {
+            this.data = {};
+        }
+
+        for (let column in data) {
+            this.data[column] = data[column];
+
+            // Don't override default fields
+            if (this.hasOwnProperty(column)) {
+                continue;
+            }
+
+            // Create getter and setter with column name (ignore setter if column is primary key)
+            Object.defineProperty(this, column, {
+                get: function() { return this.data[column]; },
+                set: (this.primaryKey == column) ? undefined : function(value) { this.data[column] = value; }
+            });
+        }
+    }
 }
+
+const PRI_KEY_FLAG = 2;

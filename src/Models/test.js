@@ -5,7 +5,7 @@ export default class Test extends Model {
     static fillable = ["title", "description", "public"];
     
     constructor() {
-        super(arguments);
+        super(...arguments);
     }
 
 

@@ -8,6 +8,15 @@ Database.connect(DB_CONFIG).then(async () => {
     let test = await Test.limit(1).first();
     test.save();
 
+    let test2 = new Test({
+        title: "new row",
+        description: "very interesting description"
+    });
+
+    console.log(test2);
+    await test2.save();
+
+    console.log(test2.id);
 }).catch((error) => { console.log("big error"); console.log(error); });
 
 // Initialize Discord client

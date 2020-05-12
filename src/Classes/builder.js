@@ -213,6 +213,7 @@ export default class Builder {
 
         this.limit(1);
         this.buildQuery();
+
         this.limit(previousLimit);
 
         // TODO: Remove debug line
@@ -230,39 +231,7 @@ export default class Builder {
 
                 // Create new model instance
                 let model = new this.base();
-                model.data = {};
-
-                // Find primary key
-                for (let field of fields) {
-                    let isPrimaryKey = (field.flags & PRI_KEY_FLAG) == PRI_KEY_FLAG;
-
-                    if (isPrimaryKey) {
-                        model.primaryKey = field.name;
-                        break;
-                    }
-                }
-
-                // Set primary key to null if not exists
-                if (model.primaryKey === undefined) {
-                    model.primaryKey = null;
-                }
-
-                // Insert data into model
-                for (let column in result) {
-                    model.data[column] = result[column];
-
-                    // Don't override default fields
-                    if (model.hasOwnProperty(column)) {
-                        console.log(`Skipped column ${key} - the model already has a field with the same name.`);
-                        continue;
-                    }
-
-                    // Create getter and setter with column name (ignore setter if column is primary key)
-                    Object.defineProperty(model, column, {
-                        get: function() { return this.data[column]; },
-                        set: (model.primaryKey == column) ? undefined : function(value) { this.data[column] = value; }
-                    });
-                }
+                model.fillModelFromData(result, fields);
 
                 resolve(model);
             });
