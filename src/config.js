@@ -1,7 +1,7 @@
 module.exports = {
     COMMAND_PREFIX: '!',
 
-    CLIENT_TOKEN: "",
+    CLIENT_TOKEN: "NzA3OTQwNjUyNjc1MjM1OTAz.XrQHUA.L15ObxNRhHb0AjtweOfTznyC8Jk",
     
     DBCONFIG: {
         HOST: 'localhost',
