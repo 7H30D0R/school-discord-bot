@@ -2,6 +2,8 @@
  * Builds a query, executes and returns the base model.
  */
 export default class Builder {
+    // TODO: Update and insert statements
+
     /**
      * The current query bindings.
      */

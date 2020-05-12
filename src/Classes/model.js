@@ -7,17 +7,7 @@ export default class Model {
             throw new TypeError("Cannot construct Abstract instances directly");
         }      
     }
-
-    /**
-     * Adds a binding to the query.
-     * @param {*} value The value to be inserted into binding
-     * @param {*} type The type of binding to insert the value into
-     */
-    static addBinding(value, type) {
-        
-        return new Builder(this).addBinding(value, type);
-    }
-
+    
     /**
      * Adds a where binding to the query.
      * @param {*} key The column to compare.

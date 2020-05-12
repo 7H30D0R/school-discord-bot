@@ -1,13 +1,24 @@
 import Test from './Models/test.js';
 import Discord from 'discord.js';
-import { CLIENT_TOKEN, COMMAND_PREFIX, REACTION_NUMBERS } from './config.js';
+import { CLIENT_TOKEN, COMMAND_PREFIX, REACTION_NUMBERS, DBCONFIG } from './config.js';
+import Database from './Classes/database';
+import dotenv from 'dotenv';
 
+// Load environment config file
+dotenv.config();
 
+// Initialize database connection
+Database.connect(DBCONFIG["HOST"], DBCONFIG["USER"], DBCONFIG["PASS"], DBCONFIG["NAME"]);
+
+// Initialize Discord client
 const client = new Discord.Client();
 client.login(CLIENT_TOKEN);
 
-let test = Test.where("column_one", "2").orderBy('column_two', 'DESC').limit(1).first();
-test.column_one;
+// TODO: Clean and rewrite everything below
+// From old project
+
+// test
+let test = Test.where("column_one", 1).orderBy('column_two', 'DESC').limit(1);
 
 console.log(test.buildQuery());
 
