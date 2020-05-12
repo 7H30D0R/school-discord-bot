@@ -24,8 +24,6 @@ client.login(CLIENT_TOKEN);
 // TODO: Clean and rewrite everything below
 // From old project
 
-// test
-
 
 client.on('ready', () => {
     console.log(`Connected to Discord as ${client.user.tag}!`);
