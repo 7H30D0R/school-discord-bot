@@ -1,5 +1,5 @@
 import mysql from 'mysql';
-// This might be a bad design pattern, but it's only for internal use.
+// This might be a bad design pattern (making everything static), but it's only for internal use.
 
 /**
  * Holds a single static MySQL database connection.

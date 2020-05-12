@@ -4,8 +4,6 @@ import Database from "./database";
  * Builds a query, executes and returns the base model.
  */
 export default class Builder {
-    // TODO: Update and insert statements
-
     /**
      * The current query bindings.
      */
@@ -200,8 +198,27 @@ export default class Builder {
      * Gets all records based on the current query.
      */
     get = () => {
+        this.buildQuery();
         return new Promise((resolve, reject) => {
-            
+            Database.connection.query(this.query, this.queryArguments, (error, results, fields) => {
+                if (error) {
+                    console.log(error);
+                    reject(error);
+                    return;
+                }
+
+                let modelArray = [];
+                
+                for (let result of results) {        
+                    // Create new model instance
+                    let model = new this.base();
+                    model.fillModelFromData(result, fields);
+                    
+                    modelArray.push(model);
+                }
+
+                resolve(modelArray);
+            });
         });
     }
 

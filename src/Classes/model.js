@@ -17,27 +17,8 @@ export default class Model {
         // Create model with new data
         if (data !== undefined && typeof(data) === 'object') {
             this.isNewRow = true;
-            this.data = {};
 
-            // Insert data into model
-            for (let column in data) {
-                // Skip column if not fillable
-                if (!this.constructor.fillable.includes(column)) continue;
-
-                this.data[column] = data[column];
-
-                // Don't override default fields
-                if (this.hasOwnProperty(column)) {
-                    console.log(`Skipped column ${key} - the model already has a field with the same name.`);
-                    continue;
-                }
-
-                // Create getter and setter with column name
-                Object.defineProperty(this, column, {
-                    get: function() { return this.data[column]; },
-                    set: function(value) { this.data[column] = value; }
-                });
-            }
+            this.fillModelFromData(data);
         }
     }
     
@@ -194,22 +175,14 @@ export default class Model {
                 return;
             }
 
-            query += ") VALUES (";
-
-            // Add placeholder values to query
-            for (let y = 0; y < i; y++) {
-                query += (y !== 0) ? ", " : "";
-                query += `?`;
-            }
-
-            query += ")";
-
+            query += ") VALUES ?";
+            
             // TODO: Remove debug lines
             console.log(query);
             console.log(parameters);
 
             // Execute query
-            Database.connection.query(query, parameters, (error, result, fields) => {
+            Database.connection.query(query, [[parameters]], (error, result, fields) => {
                 if (error) {
                     // TODO: Remove debug line
                     console.log(error);
