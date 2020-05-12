@@ -1,5 +1,5 @@
+import Database from ".";
 import Builder from "./builder";
-import Database from './database';
 
 export default class Model {
     /**

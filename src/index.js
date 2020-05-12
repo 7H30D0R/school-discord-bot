@@ -1,7 +1,7 @@
-import Test from './Models/test.js';
+import Test from './models/test';
 import Discord from 'discord.js';
-import { REACTION_NUMBERS, DB_CONFIG, COMMAND_PREFIX, CLIENT_TOKEN } from './config.js';
-import Database from './Classes/database';
+import { REACTION_NUMBERS, DB_CONFIG, COMMAND_PREFIX, CLIENT_TOKEN } from './config';
+import Database from './classes/database';
 
 // Initialize database connection
 Database.connect(DB_CONFIG).then(async () => {
