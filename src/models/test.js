@@ -1,4 +1,4 @@
-import Model from "../classes/database/model";
+import Model from "../classes/database/Model";
 
 export default class Test extends Model {
     static table = "quizzes";
