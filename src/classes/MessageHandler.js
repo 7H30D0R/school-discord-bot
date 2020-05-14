@@ -46,9 +46,7 @@ class MessageHandler {
     onCommand = (message) => {
         let params = message.content.substring(COMMAND_PREFIX.length).split(' ');
         let commandName = params[0];
-
-        console.log(message);
-
+        
         if (!Client.commandsByAlias.hasOwnProperty(commandName)) return;
 
         let command = Client.commandsByAlias[commandName];

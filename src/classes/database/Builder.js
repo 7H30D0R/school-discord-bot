@@ -260,6 +260,11 @@ export default class Builder {
                     return;
                 }
 
+                if (results.length === 0) {
+                    resolve(null)
+                    return;
+                }
+
                 let result = results[0];
 
                 // Create new model instance
