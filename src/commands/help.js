@@ -1,4 +1,5 @@
 import Command from '../classes/Command';
+import { COMMAND_PREFIX } from '../config';
 
 class HelpCommand extends Command {
     name = "help";
@@ -9,7 +10,7 @@ class HelpCommand extends Command {
         message.channel.send({embed: {
             color: 3447003,
             title: "Commands",
-            description: "Here's a list of all available commands.\n - !help\n - !quiz"
+            description: `Here's a list of all available commands.\n - ${COMMAND_PREFIX}help\n - ${COMMAND_PREFIX}quiz`
         }});
     }
 }

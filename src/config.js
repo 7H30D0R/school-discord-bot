@@ -8,7 +8,7 @@ dotenv.config();
  * Prefix to be used for commands in the Discord bot.
  * @type {string}
  */
-const COMMAND_PREFIX = '!';
+const COMMAND_PREFIX = process.env.COMMAND_PREFIX;
 
 /**
  * Discord client token.
