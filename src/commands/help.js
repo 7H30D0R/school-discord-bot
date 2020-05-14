@@ -9,8 +9,8 @@ class HelpCommand extends Command {
     exec = ( message, params ) => {
         message.channel.send({embed: {
             color: 3447003,
-            title: "Commands",
-            description: `Here's a list of all available commands.\n - ${COMMAND_PREFIX}help\n - ${COMMAND_PREFIX}quiz`
+            title: "Kommandoer",
+            description: `Her er en liste over tilgængelige kommandoer.\n - ${COMMAND_PREFIX}help\n - ${COMMAND_PREFIX}quiz`
         }});
     }
 }
