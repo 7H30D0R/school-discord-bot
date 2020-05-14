@@ -42,6 +42,14 @@ export default class Model {
     }
 
     /**
+     * Sets the order in which the records are returned to random.
+     * @param {boolean} [state=true] Random order on or off (default on).
+     */
+    static inRandomOrder(state) {
+       return new Builder(this).inRandomOrder(state);
+    }
+
+    /**
      * Adds a limit to the number of records being returned.
      * @param {Number} limit The maximum number of records to be fetched.
      */

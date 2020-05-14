@@ -19,6 +19,11 @@ export default class Builder {
     _limit;
 
     /**
+     * Whether the result order should be random.
+     */
+    _inRandomOrder = false;
+
+    /**
      * Array of columns to be returned.
      */
     columns;
@@ -100,27 +105,31 @@ export default class Builder {
             queryArguments.push(binding.value);
 
             if (i < this.bindings.where.length - 1) {
-                query += ",";
+                query += " AND ";
             }
 
             query += " ";
         }
 
         // Add order by bindings
-        if (this.bindings.order.length > 0) {
-            query += "ORDER BY ";
-        }
-
-        for (let i = 0; i < this.bindings.order.length; i++) {
-            let binding = this.bindings.order[i];
-
-            query += `${binding.column} ${binding.direction}`;
-
-            if (i < this.bindings.where.length - 1) {
-                query += ", ";
+        if (this._inRandomOrder) {
+            query += "ORDER BY RAND() ";
+        } else {
+            if (this.bindings.order.length > 0) {
+                query += "ORDER BY ";
             }
 
-            query += " ";
+            for (let i = 0; i < this.bindings.order.length; i++) {
+                let binding = this.bindings.order[i];
+
+                query += `${binding.column} ${binding.direction}`;
+
+                if (i < this.bindings.where.length - 1) {
+                    query += ", ";
+                }
+
+                query += " ";
+            }
         }
         
         // Add limit
@@ -183,6 +192,15 @@ export default class Builder {
         }
 
         this.addBinding(bindingValue, 'order');
+        return this;
+    }
+
+    /**
+     * Sets the order in which the records are returned to random.
+     * @param {boolean} [state=true] Random order on or off (default on).
+     */
+    inRandomOrder = (state) => {
+        this._inRandomOrder = (state === undefined) ? true : state;
         return this;
     }
 

@@ -4,15 +4,16 @@ import Client from './Client';
 
 class CommandLoader {
     commands = {};
+    commandsByAlias = {};
 
-    path = "./commands/";
+    path = "./src/commands/";
 
     constructor() {
         this.load();
     }
 
     load = () => {
-        this.loadDirectory();
+        this.loadDirectory(this.path);
 
         let groups = fs.readdirSync(this.path);
         for (let group of groups) {
@@ -23,13 +24,14 @@ class CommandLoader {
         } 
         
         Client.commands = this.commands;
+        Client.commandsByAlias = this.commandsByAlias;
     }
 
     loadDirectory = (path) => {
-        let commands = fs.readdirSync(this.path + group);
+        let commands = fs.readdirSync(path);
 
         for (let file of commands) {
-            let filePath = this.path + (path || '') + file;
+            let filePath = path + file;
 
             let isDirectory = fs.lstatSync(filePath).isDirectory();
             let isJavascriptFile = file.slice(-3) === '.js';
@@ -38,29 +40,38 @@ class CommandLoader {
 
             let command;
             try {
-                command = require("." + path);
+                command = require("../." + filePath);
+                //let fileContents = fs.readFileSync(filePath, {encoding:'utf8', flag:'r'});
+                //console.log(fileContents);
             } catch(e) {
-                logger.warn(e);
+                console.log(e);
                 continue;
             }
 
-            initialize(command);
+            this.initialize(command.default);
         }
 
     }
 
     initialize = (CommandChild) => {
         if (!CommandChild || !(CommandChild.prototype instanceof Command)) return;
-        if (CommandChild.name === undefined) continue;
-
-        CommandChild.prototype.constructor = function(...args) {
-            this.super(...args);
-        }
 
         let command = new CommandChild();
+
+        if (command.disabled || command.name === undefined) {
+            return;
+        }
+
         command.onStart();
 
-        this.commands[CommandChild.name] = command;
+        this.commands[command.name] = command;
+        this.commandsByAlias[command.name] = command;
+
+        for (let alias of command.aliases) {
+            this.commandsByAlias[alias] = command;
+        }
+
+        console.log(`Loaded command ${command.name}!`);
     }
 }
 
