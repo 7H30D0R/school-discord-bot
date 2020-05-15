@@ -1,11 +1,11 @@
-
 # MathBot
 
 School-related Discord bot.
 
 ## Requires
- * MySQL
- * Node.js
+ * [MySQL](https://dev.mysql.com/downloads/installer/ "Download MySQL Installer")
+ * [Node.js](https://nodejs.org/en/ "Node.js")
+ * [Discord token](https://discord.com/developers/applications "Discord Developer Portal")
 
 ## Setup guide
 * Create a database in MySQL and import _mathbot.sql_
