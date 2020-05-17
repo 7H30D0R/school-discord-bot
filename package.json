@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "build": "babel --presets @babel/preset-env -d lib/ src",
     "start": "babel-node --presets @babel/preset-env src/index.js --plugins @babel/plugin-proposal-class-properties"
   },
@@ -15,7 +15,8 @@
     "@babel/core": "^7.0.0",
     "@babel/node": "^7.0.0",
     "@babel/plugin-proposal-class-properties": "^7.0.0",
-    "@babel/preset-env": "^7.0.0"
+    "@babel/preset-env": "^7.0.0",
+    "jest": "^26.0.1"
   },
   "dependencies": {
     "discord.js": "^12.2.0",
